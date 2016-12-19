@@ -24,15 +24,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-// [START example]
 @SuppressWarnings("serial")
-@WebServlet(name = "helloworld", value = "/" )
+@WebServlet(name = "helloworld", value = "/webhook")
 public class HelloServlet extends HttpServlet {
 
-  @Override
-  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    PrintWriter out = resp.getWriter();
-    out.println("Hello, world - Flex Servlet");
-  }
+	private static String VERIFY_TOKEN = "thou_shall_pass";
+
+	@Override
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		if (new String(req.getParameter("hub.mode")).equals("subscribe")
+				&& new String(req.getParameter("hub.verify_token")).equals(VERIFY_TOKEN)) {
+			PrintWriter out = resp.getWriter();
+			out.println(new String(req.getParameter("hub.challenge")));
+		} else {
+			System.out.println("unexpected !!!!!!");
+		}
+	}
+
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+	}
 }
-// [END example]
